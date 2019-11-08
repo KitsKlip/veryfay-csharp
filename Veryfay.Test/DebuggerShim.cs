@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using System.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSpec;
 using NSpec.Domain;
 using NSpec.Domain.Formatters;
@@ -20,23 +20,27 @@ using NSpec.Domain.Formatters;
  * Visual Studio will detect this and will give you a window which you can use to attach a debugger.
  */
 
-//[TestFixture]
-public class DebuggerShim
+
+namespace Veryfay.Test
 {
-    //[Test]
-    public void debug()
+    [TestClass]
+    public class DebuggerShim
     {
-        var tagOrClassName = "class_or_tag_you_want_to_debug";
+        [TestMethod]
+        public void Run_NSpec_Tests()
+        {
+            var tagOrClassName = "class_or_tag_you_want_to_debug";
 
-        var types = GetType().Assembly.GetTypes(); 
-        // OR
-        // var types = new Type[]{typeof(Some_Type_Containg_some_Specs)};
-        var finder = new SpecFinder(types, "");
-        var builder = new ContextBuilder(finder, new Tags().Parse(tagOrClassName), new DefaultConventions());
-        var runner = new ContextRunner(builder, new ConsoleFormatter(), false);
-        var results = runner.Run(builder.Contexts().Build());
+            var types = GetType().Assembly.GetTypes();
+            // OR
+            // var types = new Type[]{typeof(Some_Type_Containg_some_Specs)};
+            var finder = new SpecFinder(types, "");
+            var builder = new ContextBuilder(finder, new Tags().Parse(tagOrClassName), new DefaultConventions());
+            var runner = new ContextRunner(new Tags().Parse(tagOrClassName), new ConsoleFormatter(), false);
+            var results = runner.Run(builder.Contexts().Build());
 
-        //assert that there aren't any failures
-        results.Failures().Count().should_be(0);
+            //assert that there aren't any failures
+            results.Failures().Count().CompareTo(0);
+        }
     }
 }

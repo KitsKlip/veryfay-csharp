@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Veryfay
+﻿namespace Veryfay
 {
     public class AuthorizationEngine
     {
@@ -16,15 +10,11 @@ namespace Veryfay
             activityRegistry.Add(activity, ps);
             foreach (var a in moreActivities)
                 activityRegistry.Add(a, ps);
+
             return ps;
         }
 
         public ActivityAuthorization this[Activity activity]
-        {
-            get
-            {
-                return new ActivityAuthorization(activity, activityRegistry);
-            }
-        }
+            => new ActivityAuthorization(activity, activityRegistry);
     }
 }

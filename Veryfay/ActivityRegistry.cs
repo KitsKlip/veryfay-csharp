@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Veryfay
 {
@@ -25,19 +23,17 @@ namespace Veryfay
             var key = activity.GetType();
             if (registeredPermissions.ContainsKey(key))
                 activityPermissionList = registeredPermissions[key];
+
             registeredPermissions[key] = activityPermissionList.Concat(new PermissionSet[] { ps }).ToArray();
         }
 
         internal PermissionSet[] Get(Activity activity)
         {
-            PermissionSet[] permissionSets;
-            if (registeredPermissions.TryGetValue(activity.GetType(), out permissionSets))
+            if (registeredPermissions.TryGetValue(activity.GetType(), out PermissionSet[] permissionSets))
                 return permissionSets;
-            else
-            {
-                string msg = string.Format("no registered activity of type {0}", activity);
-                throw new KeyNotFoundException(msg);
-            }
+
+            string msg = string.Format("no registered activity of type {0}", activity);
+            throw new KeyNotFoundException(msg);
         }
     }
 }

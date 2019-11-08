@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Veryfay
 {
@@ -17,28 +14,21 @@ namespace Veryfay
         }
 
         public IsAllowingResult IsAllowing<TPrincipal>(TPrincipal principal)
-        {
-            return this.IsAllowing(principal, Nothing.AtAll);
-        }
+            => this.IsAllowing(principal, Nothing.AtAll);
 
         public IsAllowingResult IsAllowing<TPrincipal, TExtraInfo>(TPrincipal principal, TExtraInfo extraInfo)
-        {
-            return this.Authorize(principal, extraInfo);
-        }
+            => this.Authorize(principal, extraInfo);
 
         public string Verify<TPrincipal>(TPrincipal principal)
-        {
-            return this.Verify(principal, Nothing.AtAll);
-        }
+            => this.Verify(principal, Nothing.AtAll);
 
         public string Verify<TPrincipal, TExtraInfo>(TPrincipal principal, TExtraInfo extraInfo)
         {
             var result = this.Authorize(principal, extraInfo);
-
             if (result.IsSuccess)
                 return result.Details;
-            else
-                throw new AuthorizationException(result.Details);
+
+            throw new AuthorizationException(result.Details);
         }
 
         private IsAllowingResult Authorize<TPrincipal, TExtraInfo>(TPrincipal principal, TExtraInfo extraInfo)

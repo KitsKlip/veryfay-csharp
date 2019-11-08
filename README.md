@@ -1,7 +1,8 @@
 Veryfay (C#) [![build badge](https://travis-ci.org/florinn/veryfay-csharp.svg?branch=master)](https://travis-ci.org/florinn/veryfay-csharp)
 ===================
 
-**Veryfay (C#)** is a port to C# of the [**Veryfay**](https://github.com/florinn/veryfay-scala) library in Scala.
+**Veryfay (C# .NetStandard)** is a port to C# of the [**Veryfay**](https://github.com/florinn/veryfay-scala) library in Scala.
+This is a form form https://github.com/florinn/veryfay-csharp
 
 ----------
 
