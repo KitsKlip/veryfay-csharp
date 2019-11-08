@@ -2,7 +2,7 @@ Veryfay (C#) [![build badge](https://travis-ci.org/florinn/veryfay-csharp.svg?br
 ===================
 
 **Veryfay (C# .NetStandard)** is a port to C# of the [**Veryfay**](https://github.com/florinn/veryfay-scala) library in Scala.
-This is a form form https://github.com/florinn/veryfay-csharp
+This is a fork from https://github.com/florinn/veryfay-csharp
 
 ----------
 
@@ -21,7 +21,7 @@ Installing
 Add this **NuGet** dependency to your project: 
 
 ```
-PM> Install-Package veryfay 
+PM> Install-Package veryfay-NetStandard 
 ```
 
 
