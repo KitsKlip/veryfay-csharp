@@ -18,14 +18,24 @@ namespace Veryfay
         public PermissionSet Allow<TPrincipal, TExtraInfo>(Role<TPrincipal, TExtraInfo> role, params Role<TPrincipal, TExtraInfo>[] moreRoles)
         {
             var roles = new Role<TPrincipal, TExtraInfo>[] { role }.Concat(moreRoles).ToArray();
-            RoleSets.Add(new AllowRoleSet<TPrincipal, TExtraInfo>(roles));
+            this.RoleSets.Add(new AllowRoleSet<TPrincipal, TExtraInfo>(roles));
+            return this;
+        }
+
+        public PermissionSet AllowAny<TPrincipal, TExtraInfo>(Role<TPrincipal, TExtraInfo> role, params Role<TPrincipal, TExtraInfo>[] moreRoles)
+        {
+            this.Allow(role);
+            
+            foreach (var additionalRole in moreRoles)
+                this.Allow(additionalRole);
+            
             return this;
         }
 
         public PermissionSet Deny<TPrincipal, TExtraInfo>(Role<TPrincipal, TExtraInfo> role, params Role<TPrincipal, TExtraInfo>[] moreRoles)
         {
             var roles = new Role<TPrincipal, TExtraInfo>[] { role }.Concat(moreRoles).ToArray();
-            RoleSets.Add(new DenyRoleSet<TPrincipal, TExtraInfo>(roles));
+            this.RoleSets.Add(new DenyRoleSet<TPrincipal, TExtraInfo>(roles));
             return this;
         }
     }

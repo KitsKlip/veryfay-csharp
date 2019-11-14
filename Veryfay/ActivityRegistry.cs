@@ -6,7 +6,7 @@ namespace Veryfay
 {
     internal class ActivityRegistry
     {
-        private Dictionary<Type, PermissionSet[]> registeredPermissions = new Dictionary<Type, PermissionSet[]>();
+        private Dictionary<string, PermissionSet[]> registeredPermissions = new Dictionary<string, PermissionSet[]>();
 
         internal void Add(Activity activity, PermissionSet ps)
         {
@@ -20,20 +20,37 @@ namespace Veryfay
         private void AddActivityPermissions(Activity activity, PermissionSet ps)
         {
             PermissionSet[] activityPermissionList = new PermissionSet[0];
-            var key = activity.GetType();
-            if (registeredPermissions.ContainsKey(key))
-                activityPermissionList = registeredPermissions[key];
-
-            registeredPermissions[key] = activityPermissionList.Concat(new PermissionSet[] { ps }).ToArray();
+            var activityKey = this.GetActivityKey(activity);
+            if (this.registeredPermissions.ContainsKey(activityKey))
+                activityPermissionList = this.registeredPermissions[activityKey];
+            this.registeredPermissions[activityKey] = activityPermissionList.Concat(new PermissionSet[] { ps }).ToArray();
         }
 
         internal PermissionSet[] Get(Activity activity)
         {
-            if (registeredPermissions.TryGetValue(activity.GetType(), out PermissionSet[] permissionSets))
+            PermissionSet[] permissionSets;
+            var activityKey = this.GetActivityKey(activity);
+            if (this.registeredPermissions.TryGetValue(activityKey, out permissionSets))
                 return permissionSets;
+            else
+            {
+                string msg = string.Format("no registered activity of type {0}", activity);
+                throw new KeyNotFoundException(msg);
+            }
+        }
 
-            string msg = string.Format("no registered activity of type {0}", activity);
-            throw new KeyNotFoundException(msg);
+        internal string GetActivityKey(Activity activity)
+            => $"{activity.GetType().GetNameWithoutGenericArity()}<{activity.Target}>";
+    }
+
+    internal static class TypeExtensions
+    {
+        internal static string GetNameWithoutGenericArity(this Type type)
+        {
+            if (type.IsGenericType)
+                return type.Name.Substring(0, type.Name.IndexOf('`'));
+            else
+                return type.Name;
         }
     }
 }
