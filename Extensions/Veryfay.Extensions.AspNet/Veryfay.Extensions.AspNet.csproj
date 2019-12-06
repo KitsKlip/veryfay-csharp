@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/KitsKlip/veryfay-csharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/KitsKlip/veryfay-csharp</PackageProjectUrl>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackageTags>C#, .NetStandard, Activity Authorization, Library, Permission, AspNetCore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Veryfay.Extensions.AspNet.Attributes;
@@ -10,6 +12,9 @@ namespace Veryfay.Extensions.AspNet.Auhtorization
     {
         internal static Activity GetActivity(this AuthorizationFilterContext context)
             => context?.GetActivityEntityType().GetActivity(context.GetHttpMethod());
+
+        internal static Activity GetActivity(this ControllerBase controller)
+           => controller?.GetActivityEntityType().GetActivity(controller.GetHttpMethod());
 
         private static Activity GetActivity(this Type entityType, string httpMethod)
         {
@@ -33,7 +38,13 @@ namespace Veryfay.Extensions.AspNet.Auhtorization
         }
 
         internal static string GetHttpMethod(this AuthorizationFilterContext context)
-            => context?.HttpContext.Request.Method.ToUpperInvariant();
+            => context?.HttpContext?.GetHttpMethod();
+
+        internal static string GetHttpMethod(this ControllerBase controller)
+            => controller?.HttpContext.GetHttpMethod();
+
+        internal static string GetHttpMethod(this HttpContext httpContext)
+            => httpContext?.Request.Method.ToUpperInvariant();
 
         internal static AuthorizeActivityAttribute GetAuthorizeActivityAttribute(this AuthorizationFilterContext context)
         {
@@ -51,8 +62,22 @@ namespace Veryfay.Extensions.AspNet.Auhtorization
             return (AuthorizeActivityAttribute)activityAttribute;
         }
 
+        internal static AuthorizeActivityAttribute GetAuthorizeActivityAttribute(this ControllerActionDescriptor descriptor)
+        {
+            if (descriptor == null) return null;
+            var activityAttribute = (AuthorizeActivityAttribute)descriptor.MethodInfo.GetCustomAttribute(typeof(AuthorizeActivityAttribute), true);
+
+            if (activityAttribute is null)
+                activityAttribute = (AuthorizeActivityAttribute)descriptor.ControllerTypeInfo.GetCustomAttribute(typeof(AuthorizeActivityAttribute), true);
+
+            return activityAttribute;
+        }
+
         internal static Type GetActivityEntityType(this AuthorizationFilterContext context)
-            => context.GetAuthorizeActivityAttribute()?.EntityType;
+            => context?.GetAuthorizeActivityAttribute()?.EntityType;
+
+        internal static Type GetActivityEntityType(this ControllerBase controller)
+            => controller?.ControllerContext?.ActionDescriptor?.GetAuthorizeActivityAttribute()?.EntityType;
 
     }
 }
