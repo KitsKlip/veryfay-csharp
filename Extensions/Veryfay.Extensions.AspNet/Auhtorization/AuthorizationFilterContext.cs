@@ -16,7 +16,7 @@ namespace Veryfay.Extensions.AspNet.Auhtorization
         internal static Activity GetActivity(this ControllerBase controller)
            => controller?.GetActivityEntityType().GetActivity(controller.GetHttpMethod());
 
-        private static Activity GetActivity(this Type entityType, string httpMethod)
+        internal static Activity GetActivity(this Type entityType, string httpMethod)
         {
             if (entityType == null) return default;
 

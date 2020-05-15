@@ -36,40 +36,32 @@ namespace Veryfay
             PermissionSet[] activityPermissions;
             try
             {
-                activityPermissions = activityRegistry.Get(activity);
+                activityPermissions = this.activityRegistry.Get(this.activity);
             }
             catch (KeyNotFoundException e)
             {
                 return new IsAllowingResult(false, e.Message);
             }
 
-            string details;
-            try
-            {
-                details = PermissionVerifier.Verify(activityPermissions, principal, extraInfo);
-            }
-            catch (AuthorizationException e)
-            {
-                return new IsAllowingResult(false, e.Message);
-            }
-
-            return new IsAllowingResult(true, details);
+            return activityPermissions.Verify(principal, extraInfo);
         }
     }
 
     public struct IsAllowingResult
     {
-        private bool isAllowing;
-        private string details;
-
         public IsAllowingResult(bool isAllowing, string details)
         {
-            this.isAllowing = isAllowing;
-            this.details = details;
+            this.IsSuccess = isAllowing;
+            this.IsFailure = !isAllowing;
+            this.Details = details;
         }
 
-        public bool IsFailure { get { return !this.isAllowing; } }
-        public bool IsSuccess { get { return this.isAllowing; } }
-        public string Details { get { return this.details; } }
+        public IsAllowingResult(bool isAllowing)
+            : this(isAllowing, string.Empty)
+        { }
+
+        public bool IsFailure { get; }
+        public bool IsSuccess { get; }
+        public string Details { get; }
     }
 }

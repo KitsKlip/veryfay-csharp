@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Veryfay
 {
@@ -6,6 +7,8 @@ namespace Veryfay
     {
         internal abstract Type PrincipalType { get; }
         internal abstract Type ExtraInfoType { get; }
+
+        internal abstract bool Check<TPrincipal, TExtraInfo>(TPrincipal principal, TExtraInfo extraInfo = default(TExtraInfo));
     }
 
     internal abstract class RoleSet<TPrincipal, TExtraInfo> : RoleSet
@@ -15,47 +18,25 @@ namespace Veryfay
         internal override Type PrincipalType { get { return typeof(TPrincipal); } }
         internal override Type ExtraInfoType { get { return typeof(TExtraInfo); } }
 
-        internal bool Check(TPrincipal principal, TExtraInfo extraInfo = default(TExtraInfo))
+        internal override bool Check<TP, TE>(TP principal, TE extraInfo = default(TE))
         {
-            var result = true;
-            Action<Role<TPrincipal, TExtraInfo>> visitor = (role) =>
-                {
-                    if (result && !role.Contains(principal, extraInfo))
-                        result = false;
-                };
-            this.Traverse(this.Roles, visitor);
-            return result;
-        }
-
-        internal string GetMsg(TPrincipal principal, TExtraInfo extraInfo = default(TExtraInfo))
-        {
-            var msg = string.Empty;
-            var breakIt = false;
-            Action<Role<TPrincipal, TExtraInfo>> visitor = (role) =>
+            foreach (var role in this.Roles)
             {
-                if (!breakIt)
+                var res = role.GetType().IsAssignableFrom(typeof(Role<TP, TE>));
+                if (PrincipalType.IsAssignableFrom(typeof(TP)) && ExtraInfoType.IsAssignableFrom(typeof(TE)))
                 {
-                    if (role.Contains(principal, extraInfo))
-                    {
-                        msg += string.Format("{0} contains {1} and {2} AND\n", role, principal, extraInfo);
-                    }
-                    else
-                    {
-                        msg += string.Format("{0} DOES NOT contain {1} and {2}\n", role, principal, extraInfo);
-                        breakIt = true;
-                    }
+                    var principalValue = (TPrincipal)((dynamic)principal);
+                    var extraInfoValue = default(TExtraInfo);
+                    
+                    if (extraInfo != null)//TODO:Fix != default
+                        extraInfoValue = (TExtraInfo)((dynamic)extraInfo);
+
+                    if (role.Contains(principalValue, extraInfoValue))
+                        return true;
                 }
-            };
-            this.Traverse(this.Roles, visitor);
-            return msg;
-        }
-
-        private void Traverse(Role<TPrincipal, TExtraInfo>[] roles, Action<Role<TPrincipal, TExtraInfo>> visitor)
-        {
-            foreach (var role in roles)
-            {
-                visitor(role);
             }
+
+            return false;
         }
     }
 

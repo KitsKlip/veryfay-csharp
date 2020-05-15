@@ -19,24 +19,21 @@ namespace Veryfay
 
         private void AddActivityPermissions(Activity activity, PermissionSet ps)
         {
-            PermissionSet[] activityPermissionList = new PermissionSet[0];
+            var activityPermissionList = new PermissionSet[0];
             var activityKey = this.GetActivityKey(activity);
             if (this.registeredPermissions.ContainsKey(activityKey))
                 activityPermissionList = this.registeredPermissions[activityKey];
+
             this.registeredPermissions[activityKey] = activityPermissionList.Concat(new PermissionSet[] { ps }).ToArray();
         }
 
         internal PermissionSet[] Get(Activity activity)
         {
-            PermissionSet[] permissionSets;
             var activityKey = this.GetActivityKey(activity);
-            if (this.registeredPermissions.TryGetValue(activityKey, out permissionSets))
+            if (this.registeredPermissions.TryGetValue(activityKey, out PermissionSet[] permissionSets))
                 return permissionSets;
-            else
-            {
-                string msg = string.Format("no registered activity of type {0}", activity);
-                throw new KeyNotFoundException(msg);
-            }
+
+            throw new KeyNotFoundException($"no registered activity of type {activity}");
         }
 
         internal string GetActivityKey(Activity activity)
